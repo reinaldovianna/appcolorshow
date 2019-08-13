@@ -1,0 +1,48 @@
+@charset "UTF-8";
+@font-face {
+	font-family: "UniversLTStd";
+	src: url("../_fontes/UniversLTStd.otf");
+}
+
+@font-face {
+	font-family: "UniversLTStd-Light";
+	src: url("../_fontes/UniversLTStd-Light.otf");
+}
+
+@font-face {
+	font-family: "HelveticaneueBold";
+	src: url("../_fontes/HelveticaneueBold.otf");
+}
+
+@font-face {
+	font-family: "HelveticaneueThin";
+	src: url("../_fontes/HelveticaneueThin.otf");
+}
+
+section#corpo h1 {
+	font-family: 'UniversLTStd-Light', Arial, sans-serif;
+	font-weight: lighter;
+	font-size: 36.19pt;
+	letter-spacing: 0.1em;	
+}
+
+section#corpo h2 {
+	font-family: 'UniversLTStd-Light', Arial, sans-serif;
+	font-weight: lighter;
+	font-size: 26pt;
+}
+
+section#corpo p#tudosobremake{
+	font-family: "Arial", sans-serif;
+	text-transform: none;
+	font-size: 10pt;
+	color: white;
+}
+
+section#corpo p#tudosobremake a{
+	text-decoration: underline;
+}
+
+section#corpo section#slideshow{
+	height: 400px;
+}

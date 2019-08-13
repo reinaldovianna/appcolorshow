@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+
+<html class="no-js" lang="pt-br">
+<head>
+  <title>Nail Art Studio</title>
+	<meta charset="UTF-8"/>
+  <meta property="og:title" content="Nail Art Studio"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:image" content="http://www.lehub.com.br/maybelline/facebook/appcolorshow/_imagens/mao-unhas.png"/>
+  <meta property="og:description" content="Crie sua Nail Art."/>
+	<link rel="stylesheet" type="text/css" href="_css/estilo.css">
+  <link rel="stylesheet" type="text/css" href="_css/estiloexperimente.css">
+  <link rel="stylesheet" type="text/css" href="_css/estiloPaletaEsmaltes.css">
+  <script src="_javascript/jquery-1.11.0.min.js"></script>
+  <script src="_javascript/modernizr.custom.44715.js"></script>
+  <script src="_javascript/base64binary.js"></script>
+  <script src="_javascript/utils.js"></script>
+  <!--[if lt IE 9]>
+  <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+  <![endif]-->
+  <script src="_javascript/scriptcanvasimagens.js"></script>
+  <script type="text/javascript">
+    $(function(){ 
+          var tipoDesenho,
+          corBase = 'rgba(0,0,0,0)',
+          corMedia = 'rgba(0,0,0,0)',
+          corInterna = 'rgba(0,0,0,0)',
+          quantidadeCores,
+          possuiCorBase = false,
+          possuiCorMedia = false,
+          possuiCorInterna = false,
+          camadaCor = 'cor-base',
+          nomeArquivo = '',
+          isRedirect = false; //Variável responsável por armazenar o nome do arquivo a ser gerado no upload.
+
+          var imagemMao = document.getElementById('mao-unhas');
+                      
+          var canvas = document.createElement('canvas');
+          var image = new Image();
+          image.src = getSourceMao();//canvas.toDataURL("image/png");
+          
+          
+          ctx = canvas.getContext('2d');
+          
+          //Carregamento inicial da imagem mao-unhas
+          image.onload = function(){
+                    canvas.width = image.width;
+                    canvas.height = image.height;        
+                    ctx.drawImage(image, 0, 0);
+
+                    imagemMao.src = canvas.toDataURL("image/png");
+
+          };
+
+          //Se a requisição vier de um link de post a unha será preenchida de acordo com os parâmetros passados no link.
+          if (localStorage.getItem("redirect") != null && localStorage.getItem("redirect") == 'experimente') {
+            
+            if(localStorage.getItem("tipoDesenho") != null
+              && localStorage.getItem("corBase") != null
+              && localStorage.getItem("corInterna") != null){
+
+                isRedirect = true;
+
+                tipoDesenho = localStorage.getItem("tipoDesenho");
+                corBase = '#' + localStorage.getItem("corBase");
+                corInterna = '#' + localStorage.getItem("corInterna");
+
+                quantidadeCores = 2;
+                possuiCorBase = true;
+                possuiCorInterna = true;
+
+                if (localStorage.getItem("corMedia") != null) {
+                  corMedia = '#' + localStorage.getItem("corMedia");
+                  quantidadeCores = 3;
+                  possuiCorMedia = true;
+                };
+
+                setDesenhoUnhas();
+                setEstiloMenuCamadaCor(camadaCor);
+                setCompartilhamento();
+            }
+
+            localStorage.clear();
+          };
+
+          $('#desenhos-unha').find('.desenho-unha').click(function(){
+              
+                  tipoDesenho = $(this).attr('id');
+                  
+                  if(isRedirect){
+                    isRedirect = false;  
+                  }
+                  
+                  if($('#mao-container .speech').css('display') == 'block'){
+                    $('#mao-container .speech').fadeOut('slow');  
+                  }
+    
+                  if(!quantidadeCores){
+                        $('#selecao-cores #camadas-unhas').css('display','block').hide();
+                  }
+
+                  if(tipoDesenho == 'desenhoEstrela' || tipoDesenho == 'desenhoPiramide' ||
+                     tipoDesenho == 'desenhoLaco' || tipoDesenho == 'desenhoFatia' ||
+                     tipoDesenho == 'desenhoSeta'){
+                        quantidadeCores = 3;
+                    }
+                  
+                  if(tipoDesenho == 'desenhoZebra' ||
+                     tipoDesenho == 'desenhoMeiaListra'){      
+                        quantidadeCores = 2;
+                  }
+
+                  setTituloSegundoPasso();
+
+                  //Exibe/Oculta o botão para selecionar a camada de cor de acordo com a quantidade determinada para o desenho
+                  if(quantidadeCores == 2){
+                    $('#selecao-cores #camadas-unhas').fadeIn('slow').find('.link-camada-cor:last').prev().hide();
+                  }else if(quantidadeCores == 3){
+                    $('#selecao-cores #camadas-unhas').fadeIn('slow').find('.link-camada-cor:last').prev().fadeIn('slow');
+                  }
+
+                  if(possuiCorBase || possuiCorMedia || possuiCorInterna){
+                    if(quantidadeCores == 2 && camadaCor == 'cor-media'){
+                      camadaCor = 'cor-interna';
+                    }
+
+                    if(quantidadeCores == 3 && possuiCorBase && !possuiCorMedia){
+                      camadaCor = 'cor-media';
+                    }
+
+                    setDesenhoUnhas();
+                    setEstiloMenuCamadaCor(camadaCor);
+                    setCompartilhamento();
+                  }
+          });
+
+
+          //Seleção de cores e gráficos na paleta de esmaltes
+          $('#paletaEsmaltes').find('.esmalte').click(function(){
+            if(tipoDesenho == null || isRedirect){
+              $('#mao-container .speech').css('display', 'block').hide();
+              $('#mao-container .speech').fadeIn('slow');
+            } else{
+              var corCorrente = '#' + $(this).attr('id');
+
+              //Determina a cor que de verá ser preenchida em determinada camada
+              if(camadaCor == 'cor-base'){
+                corBase = corCorrente;
+                possuiCorBase = true
+              } else if(camadaCor == 'cor-media'){
+                corMedia = corCorrente;
+                possuiCorMedia = true;
+              } else if(camadaCor == 'cor-interna'){
+                corInterna = corCorrente;
+                possuiCorInterna = true;
+              }
+              
+              //Insere os desenhos
+              setDesenhoUnhas();
+
+              //Deternima qual a proxima cor a ser preenchida
+              camadaCor = proximaCamadaCor(camadaCor);
+
+              setEstiloMenuCamadaCor(camadaCor);
+
+              setCompartilhamento();
+            
+            }
+          });
+          
+          function setTituloSegundoPasso(){
+                  //Insere o título informando a quantidade de cores que poderá ser selecionada
+                  $('#segundo-passo h3 span#titulo-segundo-passo').fadeOut('slow', function(){
+                      $(this).text('Escolha até ' + quantidadeCores + ' cores:').fadeIn('slow');
+                  });
+          }
+
+          function setCompartilhamento(){
+            if(quantidadeCores == 2 && 
+              (possuiCorBase && possuiCorInterna)){
+              if($('#compartilhamento-facebook').css('display') == 'none'){
+                  $('#compartilhamento-facebook').css('display','block').hide();
+                  $('#compartilhamento-facebook').fadeIn('slow');
+                }            
+            
+            }else if(quantidadeCores == 3 && 
+                      (possuiCorBase && possuiCorMedia && possuiCorInterna)){
+              if($('#compartilhamento-facebook').css('display') == 'none'){
+                  $('#compartilhamento-facebook').css('display','block').hide();
+                  $('#compartilhamento-facebook').fadeIn('slow');
+                }
+              
+            }else{
+              if($('#compartilhamento-facebook').css('display') == 'block'){
+                $('#compartilhamento-facebook').fadeOut('slow');  
+              }
+            }
+          }
+
+          function setDesenhoUnhas(){
+              //Limpa Imagem
+              ctx.clearRect(0, 0, canvas.width, canvas.height);
+              
+              //Criando nova imagem para ser editada
+              image = new Image();
+              image.src = getSourceMao();          
+              
+              
+              image.onload = function(){
+                  ctx.drawImage(image, 0, 0);
+                  setCorUnha(ctx, corBase);
+
+                  if(tipoDesenho == 'desenhoEstrela'){
+                    setDesenhoEstrela(ctx, corMedia, corInterna);
+                  } else if(tipoDesenho == 'desenhoPiramide'){
+                    setDesenhoPiramide(ctx, corMedia, corInterna);
+                  } else if(tipoDesenho == 'desenhoLaco'){
+                    setDesenhoLaco(ctx, corBase, corMedia, corInterna);
+                  } else if(tipoDesenho == 'desenhoFatia'){
+                    setDesenhoFatia(ctx, corMedia, corInterna);
+                  } else if(tipoDesenho == 'desenhoSeta'){
+                    setDesenhoSeta(ctx, corMedia, corInterna);
+                  } else if(tipoDesenho == 'desenhoZebra'){
+                    setDesenhoZebra(ctx, corInterna);
+                  } else if(tipoDesenho == 'desenhoMeiaListra'){      
+                    setDesenhoMeiaListra(ctx, corInterna);
+                  }
+                  
+              if(corBase != 'rgba(0,0,0,0)') {
+                if ($(corBase).hasClass( "purpurina")) {
+                      noise(ctx, image, corBase);
+                }
+              }
+
+              if(corMedia != 'rgba(0,0,0,0)') {
+                if ($(corMedia).hasClass( "purpurina")) {
+                      noise(ctx, image, corMedia);
+                }
+              }
+
+              if(corInterna != 'rgba(0,0,0,0)') {
+                if ($(corInterna).hasClass( "purpurina")) {
+                      noise(ctx, image, corInterna);
+                }
+              }
+
+              //Após o carregamento da imagem, adiciona-la ao contexto canvas e gerar um arquivo png para adicionar ao elemento img#mao-unhas
+                  ctx.drawImage(image, 0, 0);
+                  imagemMao.src = canvas.toDataURL("image/png");
+              };
+          }
+
+          $('#camadas-unhas .camada-cor-unha').click(function(){
+              camadaCor = $(this).attr('id');
+              setEstiloMenuCamadaCor(camadaCor);
+          });
+
+          function setEstiloMenuCamadaCor(camada){
+            var camadaCorrente = '#' + camada;
+
+            //Dando destaque em escala de tamanho a cor corrente e retirando o dos demais
+            $(camadaCorrente).css({
+              'transform' : 'scale(1.4)',
+              '-webkit-transform' : 'scale(1.4)',
+              '-ms-transform': 'scale(1.4)',
+              '-o-transform-origin' : 'scale(1.4)'
+            });
+            $(camadaCorrente).parent().siblings().find('.camada-cor-unha').css({
+              'transform' : 'scale(1)',
+              '-webkit-transform' : 'scale(1)',
+              '-ms-transform': 'scale(1)',
+              '-o-transform-origin' : 'scale(1)'
+            })
+
+            //Insere a cor definida para cada camada
+            $('#cor-base').css('background',corBase);
+            $('#cor-media').css('background',corMedia);
+            $('#cor-interna').css('background',corInterna);
+          }
+
+          function proximaCamadaCor(camadaCor){
+            var proximaCamadaCor;
+                if(quantidadeCores == 2){                
+                    if(camadaCor =='cor-base'){
+                      proximaCamadaCor = 'cor-interna';
+                    } else {
+                      proximaCamadaCor = 'cor-base';
+                    }
+                }else if(quantidadeCores == 3){
+                    if(camadaCor =='cor-base'){
+                      proximaCamadaCor = 'cor-media';
+                    } else if(camadaCor =='cor-media'){
+                      proximaCamadaCor = 'cor-interna';
+                    }else{
+                      proximaCamadaCor = 'cor-base';
+                    }
+                }
+                return proximaCamadaCor;
+          }
+
+          ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+          
+
+          function loginFacebook(){
+             FB.login(function(response) {
+             if (response.authResponse) {
+               console.log('Welcome!  Fetching your information.... ');
+               FB.api('/me', function(response) {
+                 console.log('Good to see you, ' + response.name + '.');
+               });
+             } else {
+               console.log('User cancelled login or did not fully authorize.');
+             }
+           });
+          }
+
+         function postLinkWithImageFacebook(){
+              FB.ui({
+                          method: 'feed',
+                          link: 'https://www.lehub.com.br/maybelline/facebook/appcolorshow/canal.html?params=experimente_' + nomeArquivo,
+                          name: 'Nail Art Studio',
+                          caption: 'Crie sua Nail Art',
+                          description: '70 cores disponiveis para você.',
+                          picture: 'https://www.lehub.com.br/maybelline/facebook/appcolorshow/_cache/' + nomeArquivo + '.png',
+                          redirect_uri: 'https://www.lehub.com.br/maybelline/facebook/appcolorshow/canal.html?params=experimente_' + nomeArquivo, 
+                        }, function(response){
+                                  console.log('Post was published.');
+                                if (response && response.post_id) {
+                                } else {
+                                  console.log('Post was not published.');
+                                  removerimagemuploadPNG();
+                                }
+
+                                $('#modal').css('display','none');
+                                //removerimagemuploadPNG();
+                        });
+          }
+
+          function removerimagemuploadPNG(){
+                $.ajax({
+                  type: "POST",
+                  url: "removerimagem.php",
+                  data: {
+                     nomeImagem: nomeArquivo
+                  }
+                  }).done(function(o) {
+                      console.log('arquivo removido.');
+                });
+          }
+          
+          function uploadAndPostImagemPNG(){
+                if(quantidadeCores == 2){
+                    nomeArquivo = 'TD-' + tipoDesenho + '_CB-' + corBase + '_CI-' + corInterna + '_ID-' + uniqid();
+                } else if(quantidadeCores == 3){
+                    nomeArquivo = 'TD-' + tipoDesenho + '_CB-' + corBase + '_CM-' + corMedia  + '_CI-' + corInterna  + '_ID-' + uniqid();
+                }
+
+                nomeArquivo = replaceAll('#', '',nomeArquivo);
+
+                //$.post( "script.php", [data], [callback], [type] )
+                
+                //postCanvasToFacebook();
+                $.ajax({
+                  type: "POST",
+                  url: "uploadimagem.php",
+                  data: {
+                     nomeImagem: nomeArquivo,
+                     imgBase64: canvas.toDataURL("image/png")
+                  }
+                  }).done(function(o) {
+                      postLinkWithImageFacebook();
+                });
+              }
+
+              $('#botaocompartilhar').click(function(){
+
+                  FB.getLoginStatus(function(response) {
+                      console.log(response.status);
+                      if (response.status === "connected") 
+                      {
+                        //Habilita modal para não haver alterações enquanto não encerrar o processo de compartilhamento
+                        $('#modal').css('display','block');
+
+                        uploadAndPostImagemPNG();
+                        
+                      } else if (response.status === 'not_authorized') {
+                        loginFacebook();
+
+                      } else {
+                        loginFacebook();
+                      }
+
+                  });
+              });
+
+          ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  });
+  </script>
+
+  <script type="text/javascript">
+  		var aOff = 0;
+
+    $(function(){ 
+  		///////////////////////////////////////////////////////////////////////////////
+            var mY = 0,
+            elementoPai = $('#paletaEsmaltes .items');
+
+            $('#paletaEsmaltes').mousemove(function(e) {
+
+                // moving upward
+                if (e.pageY < mY) {
+                	//console.log('Up aOff: ' + aOff + ' pageY: ' + e.pageY + ' my: ' + mY + ' cordenada: ' + cordenada.left);
+                    aOff = aOff - ((e.pageY - mY)/5)//(aOff + 1) ;
+                    position(aOff, elementoPai, false);
+
+                // moving downward
+                } else {
+                	  aOff = aOff - ((e.pageY - mY)/5)//(aOff + 1) ;
+                    position(aOff, elementoPai, false);
+                }
+
+                // set new mY after doing test above
+                mY = e.pageY;
+
+            	});
+
+              /* Efeitos decorativos - paleta de cores*/
+              function position(vOff, elementoPai, posicaoInicial)
+              {
+                 var aOff = vOff;
+                 	   items = $(elementoPai).children(),//$('#paletaEsmaltes .items').children(),
+                     icnt = items.length,
+
+                     //Divido a quantidade de elementos pela rotação para obter o percentual reservado para cada
+                     dstep = 360 / icnt;
+                 
+                 items.each(function (idx, el)
+                  {	//Multiplico o index sequencial de cada elemento pelo percentual reservado para posiciona-lo
+  					       var a = dstep * idx;
+                      
+                      a = a+ aOff;
+                      //recebo o espaço ocupado pelo elemento, contando com suas margens
+                      var el = $(el);
+                      //tx = el.outerWidth(true),
+                      //ty = el.outerHeight(true);
+                      var tfm = '';
+
+                      tfm += 'rotate('+(a + aOff)+'deg) ';
+                      tfm += 'translate(-34px, -272px)'; //'translate(-'+(tx)+'px, -'+(ty)+'px)';
+
+                      el.css({
+                           transformOrigin: 'top center',
+                           '-webkit-transform-origin' : 'top center',
+                           '-ms-transform-origin' : 'top center',
+                           '-o-transform-origin' :  'top center',
+                            transform: tfm,
+                           '-webkit-transform' : tfm, 
+                           '-ms-transform': tfm,
+                           '-o-transform' : tfm
+                        });
+                             
+                   });
+                  
+                }
+
+                /* ------------------------------------------------------ */
+
+                $('#paletaEsmaltes .items .link-esmalte').hover(function(){
+
+                  $(this).parent().nextAll().css({
+                    'z-index':'0',
+                  });
+
+                  $(this).parent().prevAll().css({
+                    'z-index':'0' 
+                  });
+
+                   $(this).find('.esmalte').css({
+                    'z-index' : '300',
+                    'transform' : 'scale(1.8) rotate(-20deg)',
+                    '-webkit-transform' : 'scale(1.8) rotate(-20deg)',
+                    '-ms-transform': 'scale(1.8) rotate(-20deg)',
+                    '-o-transform-origin' : 'scale(1.8) rotate(-20deg)'
+                  });
+                 }, 
+
+                function () {
+                  $(this).parent().nextAll().css({
+                    'z-index':'30' 
+                  });
+
+                  $(this).parent().prevAll().css({
+                    'z-index':'30' 
+                  });
+                 
+                  $(this).find('.esmalte').css({
+                    'z-index' : '30',
+                    'transform' : 'scale(1)'
+                  });
+                 }
+              );
+            
+              position(aOff, elementoPai, true);
+  	});
+  </script>
+</head>
+<body style="background-color: #1a1a1a">
+	<div id="fb-root"></div>
+  <script src="//connect.facebook.net/pt_BR/all.js"></script>
+  <script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '1399248147010884', // App ID
+      channelUrl : 'https://www.lehub.com.br/maybelline/facebook/appcolorshow/channel.html', // Channel File
+      status     : true, // check login status
+      cookie     : true, // enable cookies to allow the server to access the session
+      xfbml      : true  // parse XFBML
+    });
+    FB.Canvas.setSize({ height: 2120 });
+
+  // Load the SDK Asynchronously
+  (function(d){
+     var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement('script'); js.id = id; js.async = true;
+     js.src = "//connect.facebook.net/pt_BR/all.js";
+     ref.parentNode.insertBefore(js, ref);
+   }(document));
+
+
+    (function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/pt_BR/all.js";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+
+  }
+  </script>
+		<header id="cabecalho">
+			<img src="_imagens/CAPA-APP_ColorShow.jpg" id="capa" usemap="#mapa"/>
+			<nav id="menu">
+				<ul>
+					<a href="index.html"><li>BEM-VINDO</li></a>
+					<a href="passoapasso.html"><li>PASSO A PASSO</li></a>
+					<li id="aba-corrente">EXPERIMENTE</li>
+				</ul>
+			</nav>
+		</header>
+		<section id="corpo">
+      <div id="modal"></div>
+      <section id="titulo-experimente">
+  			<h1>
+  			   EXPERIMENTE
+  			</h1>
+  			<hr/>
+  			<p>Crie agora sua nail art e transforme <br/>
+  				suas unhas em acessórios de moda.
+  			</p>
+      </section>
+			<section id="primeiro-passo">
+				<h3>
+					<span class="numero-titulo">01</span>&nbsp;&nbsp;&nbsp; Escolha um desenho:
+				</h3>
+				<figure id="desenhos-unha">
+					<a href="javascript:void(0)"><img src="_imagens/desenhos-unha/unha-desenho-01.png" id="desenhoZebra" class="desenho-unha"/></a>
+					<a href="javascript:void(0)"><img src="_imagens/desenhos-unha/unha-desenho-02.png" id="desenhoLaco" class="desenho-unha"/></a>
+					<a href="javascript:void(0)"><img src="_imagens/desenhos-unha/unha-desenho-03.png" id="desenhoPiramide" class="desenho-unha"/></a>
+					<a href="javascript:void(0)"><img src="_imagens/desenhos-unha/unha-desenho-04.png" id="desenhoMeiaListra" class="desenho-unha"/></a>
+					<a href="javascript:void(0)"><img src="_imagens/desenhos-unha/unha-desenho-05.png" id="desenhoEstrela" class="desenho-unha"/></a>
+					<a href="javascript:void(0)"><img src="_imagens/desenhos-unha/unha-desenho-06.png" id="desenhoFatia" class="desenho-unha"/></a>
+					<a href="javascript:void(0)"><img src="_imagens/desenhos-unha/unha-desenho-07.png" id="desenhoSeta" class="desenho-unha"/></a>
+				</figure>
+			</section>
+			<section id="segundo-passo">
+				<h3>
+					<span class="numero-titulo">02</span>&nbsp;&nbsp;&nbsp;<span id="titulo-segundo-passo">Selecione suas cores </span><!--Escolha até tres cores: -->
+				</h3>
+				<!---->
+				    <aside id="paletaEsmaltes">
+		         <ul class="items">
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="b47336" src="_imagens/esmaltes/esmalte-00.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="fce79e" src="_imagens/esmaltes/esmalte-01.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="f7d436" src="_imagens/esmaltes/esmalte-02.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="22020f" src="_imagens/esmaltes/esmalte-03.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="2b010d" src="_imagens/esmaltes/esmalte-04.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="360112" src="_imagens/esmaltes/esmalte-05.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="820022" src="_imagens/esmaltes/esmalte-06.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="730925" src="_imagens/esmaltes/esmalte-07.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="ad002d" src="_imagens/esmaltes/esmalte-08.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="cc002e" src="_imagens/esmaltes/esmalte-09.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="cc003d" src="_imagens/esmaltes/esmalte-10.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="ad0865" src="_imagens/esmaltes/esmalte-11.png" class="esmalte purpurina"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="a50051" src="_imagens/esmaltes/esmalte-12.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="e1005f" src="_imagens/esmaltes/esmalte-13.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="e9517d" src="_imagens/esmaltes/esmalte-14.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="ce2e78" src="_imagens/esmaltes/esmalte-15.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="cf4e8f" src="_imagens/esmaltes/esmalte-16.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="f1c2c6" src="_imagens/esmaltes/esmalte-17.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="eeebea" src="_imagens/esmaltes/esmalte-18.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="e1b4b0" src="_imagens/esmaltes/esmalte-19.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="eae6e5" src="_imagens/esmaltes/esmalte-20.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="0c140f" src="_imagens/esmaltes/esmalte-21.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="000b04" src="_imagens/esmaltes/esmalte-22.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="0d1410" src="_imagens/esmaltes/esmalte-23.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="056d3c" src="_imagens/esmaltes/esmalte-24.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="648970" src="_imagens/esmaltes/esmalte-25.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="69962d" src="_imagens/esmaltes/esmalte-26.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="df2325" src="_imagens/esmaltes/esmalte-27.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="171618" src="_imagens/esmaltes/esmalte-28.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="99b8ac" src="_imagens/esmaltes/esmalte-29.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="506c66" src="_imagens/esmaltes/esmalte-30.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="868686" src="_imagens/esmaltes/esmalte-31.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="5e5c5f" src="_imagens/esmaltes/esmalte-32.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="8c7e77" src="_imagens/esmaltes/esmalte-33.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="26212d" src="_imagens/esmaltes/esmalte-34.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="151317" src="_imagens/esmaltes/esmalte-35.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="07090b" src="_imagens/esmaltes/esmalte-36.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="e5575f" src="_imagens/esmaltes/esmalte-37.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="de3449" src="_imagens/esmaltes/esmalte-38.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="e33639" src="_imagens/esmaltes/esmalte-39.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="ea723d" src="_imagens/esmaltes/esmalte-40.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="b65319" src="_imagens/esmaltes/esmalte-41.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="f5ae9a" src="_imagens/esmaltes/esmalte-42.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="e12a29" src="_imagens/esmaltes/esmalte-43.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="6b3d73" src="_imagens/esmaltes/esmalte-44.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="660b54" src="_imagens/esmaltes/esmalte-45.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="6f034c" src="_imagens/esmaltes/esmalte-46.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="25062e" src="_imagens/esmaltes/esmalte-47.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="20132e" src="_imagens/esmaltes/esmalte-48.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="120012" src="_imagens/esmaltes/esmalte-49.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="560a48" src="_imagens/esmaltes/esmalte-50.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="280d1f" src="_imagens/esmaltes/esmalte-51.png" class="esmalte purpurina"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="a2887f" src="_imagens/esmaltes/esmalte-52.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="2c2326" src="_imagens/esmaltes/esmalte-53.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="341a1c" src="_imagens/esmaltes/esmalte-54.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="7fadd4" src="_imagens/esmaltes/esmalte-55.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="495a8e" src="_imagens/esmaltes/esmalte-56.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="122538" src="_imagens/esmaltes/esmalte-57.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="117482" src="_imagens/esmaltes/esmalte-58.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="006492" src="_imagens/esmaltes/esmalte-59.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="16143c" src="_imagens/esmaltes/esmalte-60.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="0e061a" src="_imagens/esmaltes/esmalte-61.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="9c815f" src="_imagens/esmaltes/esmalte-62.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="a4a19f" src="_imagens/esmaltes/esmalte-63.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="9e4e4e" src="_imagens/esmaltes/esmalte-64.png" class="esmalte purpurina"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="7d6784" src="_imagens/esmaltes/esmalte-65.png" class="esmalte purpurina"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="40658b" src="_imagens/esmaltes/esmalte-66.png" class="esmalte purpurina"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="c7cad1" src="_imagens/esmaltes/esmalte-67.png" class="esmalte"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="707034" src="_imagens/esmaltes/esmalte-68.png" class="esmalte purpurina"/></a></li>
+                <li><a href="javascript:void(0)" class="link-esmalte"><img id="211d22" src="_imagens/esmaltes/esmalte-69.png" class="esmalte"/></a></li>		     
+              </ul>
+		      	</aside>
+				    <aside id="mao-container">
+					   <figure id="conteiner-mao">
+						    <img id="mao-unhas" alt="Mão com unhas personalizadas - COLORSHOW"/>
+					   </figure>
+             <p class="speech">Primeiro, escolha um desenho</p>
+				    </aside>
+			</section>
+			<section id="selecao-cores">
+				<ul id="camadas-unhas">
+					<a href="javascript:void(0)" class="link-camada-cor"><li id="cor-base" class="camada-cor-unha"></li></a>
+					<a href="javascript:void(0)" class="link-camada-cor"><li id="cor-media" class="camada-cor-unha"></li></a>
+					<a href="javascript:void(0)" class="link-camada-cor"><li id="cor-interna" class="camada-cor-unha"></li></a>
+				</ul>
+			</section>
+			<section id="compartilhamento-facebook">
+				<hr/>
+				<h2>
+					Sua nail art está pronta
+				</h2>
+        <p>
+          <a href="javascript:void(0)" id="botaocompartilhar" class="share">
+            <span id="link-compartilhamento-facebook">Compartilhe&nbsp;&nbsp;&nbsp;&nbsp;<span class="seta">&gt;</span></span>
+          </a>
+        </p>
+			</section>
+      <a href="passoapasso.html#passo-a-passo">
+      <section id="passoapasso-link">
+          <aside>
+            <figure>
+                <img src="_imagens/link-passo-a-passo.png" id="link-passo-a-passo"/>
+            </figure>
+          </aside>
+          <hgroup>
+          <h1>Passo <br/>a passo</h1>
+          <br/>
+          <h2>Aprenda como fazer as unhas <br/>das passarelas com nossos <br/>vídeos passo a passo.</h2>
+          </hgroup>
+      </section>
+      </a>
+	</section>
+        <footer id="rodape">
+          <a href="javascript:void(0)" target="_blank">
+            <p>
+              <span id="text-compre" class="texto-destaque">compre</span><br/>online<br/><br/>
+              <span class="seta">&gt;</span>
+            </p>
+          </a>  
+            <a href="javascript:void(0)" target="_blank">
+              <p>
+                <span id="text-encontre">encontre uma</span><br/><span class="texto-destaque">loja próxima<br/>de você</span>
+                <span class="seta">&gt;</span>
+          </p>
+        </a>
+      </footer>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+
+<html lang="pt-br">
+<head>
+	<title>Nail Art Studio</title>
+	<meta charset="UTF-8"/>
+	<link rel="stylesheet" type="text/css" href="_css/estilo.css">
+	<link rel="stylesheet" type="text/css" href="_css/estilopassoapasso.css">
+	<link rel="stylesheet" type="text/css" href="_css/estiloGaleriaVideos.css"/>
+	<link rel="stylesheet" type="text/css" href="_css/estiloSlideShow.css">
+	<script src="_javascript/jquery-1.11.0.min.js"></script>
+	<!--[if lt IE 9]>
+  	<script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+  	<![endif]-->
+	<script>
+		$(function(){
+			var slideInicial = '#' + $('#s-slides .slide:first-child').attr('id'),
+			slideAnterior = slideInicial;
+
+			$(slideInicial).css({
+					'display': 'block'
+					}).hide().fadeIn('slow')
+
+			console.log(slideAnterior);
+
+			$('#s-thumbs .thumb-video').click(function(event){
+				event.preventDefault();
+
+				//Parar último vídeo em execução
+					var iframeAnterior = ''+ slideAnterior + ' iframe';
+					//Primeiro obtenha o URL do iframe
+					var url = $(iframeAnterior).attr('src');
+					//Em seguida, atribua o src como nulo, irá parar o vídeo
+					$(iframeAnterior).attr('src', '');
+					// Finalmente, atribua a URL de volta ao iframe
+					$(iframeAnterior).attr('src', url);
+
+				//Obtendo o id do vídeo referente à imagem thumb.
+				var slideCorrente = $(this).parent().attr('href');
+
+				//Exibindo o video selecionado e ocultando os demais.
+				$(slideCorrente).css({
+					'display': 'block'
+					}).hide().fadeIn('slow').siblings().css({	
+						'display': 'none'
+					});
+
+				//Armazenando o corrente como anterior para poder parar a execução caso haja alteração do mesmo.
+				slideAnterior = slideCorrente;
+
+			});
+		})
+	</script>
+	<script type="text/javascript">
+		$(function(){
+				var fotoSlideCorrente = $('#corpo #slideshow #container-slideshow #imagens-slide').children(":first");
+				fotoSlideCorrente.css('display', 'block');
+				
+
+
+				$('#anterior-slide').click(function(){
+					
+						fotoSlideCorrente.fadeOut('normal', function(){
+							if(fotoSlideCorrente.attr('id') != 'primeiro-slide'){
+									fotoSlideCorrente.prev().css('display', 'block').hide().fadeIn('normal');
+									fotoSlideCorrente = fotoSlideCorrente.prev();
+									fotoSlideCorrente.next().css('display', 'none');
+							}else{
+									$('#ultimo-slide').css('display', 'block').hide().fadeIn('normal');
+									$('#primeiro-slide').css('display', 'none');
+									fotoSlideCorrente = $('#ultimo-slide');
+							}
+						});
+				});
+
+				$('#proximo-slide').click(function(){
+
+						fotoSlideCorrente.fadeOut('normal', function(){
+							if(fotoSlideCorrente.attr('id') != 'ultimo-slide'){
+								fotoSlideCorrente.next().css('display', 'block').hide().fadeIn('normal');
+								fotoSlideCorrente = fotoSlideCorrente.next();
+								fotoSlideCorrente.prev().css('display', 'none');
+							}else{
+								$('#primeiro-slide').css('display', 'block').hide().fadeIn('normal');
+								$('#ultimo-slide').css('display', 'none');
+								fotoSlideCorrente = $('#primeiro-slide');
+							}
+						});
+
+				});
+
+
+		});
+	</script>
+
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-50085705-1', 'babylips.com.br');
+	  ga('send', 'pageview');
+
+	</script>
+</head>
+<body style="background-color: #1a1a1a">
+	<div id="fb-root"></div>
+	<script src="//connect.facebook.net/pt_BR/all.js"></script>
+	<script>
+	window.fbAsyncInit = function() {
+	  FB.init({
+	    appId      : '1399248147010884', // App ID
+	  });
+	  FB.Canvas.setSize({ height:1900 });
+	}
+	</script>
+		<header id="cabecalho">
+			<img src="_imagens/CAPA-APP_ColorShow.jpg" id="capa"/>
+			<nav id="menu">
+				<ul>
+					<a href="index.html"><li>BEM-VINDO</li></a>
+					<li id="aba-corrente">PASSO A PASSO</li>
+					<a href="experimente.html"><li>EXPERIMENTE</li></a>
+				</ul>
+			</nav>
+		</header>
+			<section id="corpo">
+					<h1 id="passo-a-passo">
+					PASSO A PASSO
+					</h1>
+					<hr/>
+					<p>Descubra como fazer as Nail ARTS <br/>
+						para você arrasar.
+					</p>
+					<p id="tudosobremake">Veja mais passo a passos no <a href="http://www.tudosobremake.com.br/tag/unhas-decoradas-passo-a-passo_t76/1" target="_blank">Tudo Sobre Make</a></p>
+					<section id="galeria-videos">
+			        <ul id="s-slides">
+			        	<li id="slide-1" class="slide">
+			        		<iframe id="video-desenho-unha01" src="//www.youtube.com/embed/5Peo-ivmupE?rel=0" frameborder="0" allowfullscreen></iframe>
+			            </li>
+			            <li id="slide-2" class="slide">
+			            	<iframe id="video-desenho-unha02" src="//www.youtube.com/embed/5Peo-ivmupE?rel=0" frameborder="0" allowfullscreen></iframe>
+			            </li>
+			            <li id="slide-3" class="slide">
+							<iframe id="video-desenho-unha03" src="//www.youtube.com/embed/5Peo-ivmupE?rel=0" frameborder="0" allowfullscreen></iframe>
+			            </li>
+			            <li id="slide-4" class="slide">
+							<iframe id="video-desenho-unha04" src="//www.youtube.com/embed/5Peo-ivmupE?rel=0" frameborder="0" allowfullscreen></iframe>
+			            </li>
+			            <li id="slide-5" class="slide">
+							<iframe id="video-desenho-unha05" src="//www.youtube.com/embed/5Peo-ivmupE?rel=0" frameborder="0" allowfullscreen></iframe>
+			            </li>
+			        </ul>
+			        <ul id="s-thumbs">
+			            <li><a href="#slide-1"><img src="_imagens/thumbs/thumbs-video-01.jpg" alt="" class="thumb-video"/></a></li>
+			            <li><a href="#slide-2"><img src="_imagens/thumbs/thumbs-video-02.jpg" alt="" class="thumb-video"/></a></li>
+			            <li><a href="#slide-3"><img src="_imagens/thumbs/thumbs-video-03.jpg" alt="" class="thumb-video"/></a></li>
+			            <li><a href="#slide-4"><img src="_imagens/thumbs/thumbs-video-04.jpg" alt="" class="thumb-video"/></a></li>
+			            <li><a href="#slide-5"><img src="_imagens/thumbs/thumbs-video-05.jpg" alt="" class="thumb-video"/></a></li>
+			        </ul>
+			    </section>
+			    <h1>
+					COMO FAZER
+				</h1>
+					<hr/>
+
+			<section id="slideshow">
+				<div id="container-slideshow">
+						<a id="anterior-slide" href="javascript:void(0)" class="commands" title="Ir para último desenho">&lt;</a>
+						<div id="imagens-slide">
+							<figure id="primeiro-slide" class="slide-show">
+								<a href="http://www.tudosobremake.com.br/noticia/unhas-decoradas-com-bolinhas-aprenda-o-passo-a-passo_a692/1" target="_blank">
+									<img src="_imagens/passo-a-passo/polka-dot.jpg"/>
+								</a>
+							</figure>
+							<figure class="slide-show">
+								<a href="http://www.tudosobremake.com.br/noticia/unha-francesinha-passo-a-passo-para-fazer-sozinha_a153/1" target="_blank">
+									<img src="_imagens/passo-a-passo/australia-day.jpg"/>
+								</a>
+							</figure>
+							<figure class="slide-show">
+								<a href="http://www.tudosobremake.com.br/noticia/aprenda-a-fazer-o-estilo-de-unhas-meia-lua-em-tres-passos_a144/1" target="_blank">
+									<img src="_imagens/passo-a-passo/colour-block.jpg"/>
+								</a>
+							</figure>
+							<figure class="slide-show">
+								<a href="http://www.tudosobremake.com.br/noticia/unhas-decoradas-com-bolinhas-aprenda-o-passo-a-passo_a692/1" target="_blank">
+									<img src="_imagens/passo-a-passo/dare-to-pair.jpg"/>
+								</a>
+							</figure>
+							<figure class="slide-show">
+								<a href="http://www.tudosobremake.com.br/noticia/unha-francesinha-passo-a-passo-para-fazer-sozinha_a153/1" target="_blank">
+									<img src="_imagens/passo-a-passo/marvellous-marble.jpg"/>
+								</a>
+							</figure>
+							<figure class="slide-show">
+								<a href="http://www.tudosobremake.com.br/noticia/aprenda-a-fazer-o-estilo-de-unhas-meia-lua-em-tres-passos_a144/1" target="_blank">
+									<img src="_imagens/passo-a-passo/pretty-in-pink.jpg"/>
+								</a>
+							</figure>
+							<figure id="ultimo-slide" class="slide-show">
+								<a href="http://www.tudosobremake.com.br/noticia/unhas-decoradas-com-bolinhas-aprenda-o-passo-a-passo_a692/1">
+									<img src="_imagens/passo-a-passo/wild-side.jpg"/>
+								</a>
+							</figure>
+						</div>
+					<a id="proximo-slide" href="javascript:void(0)" class="commands" title="Ir para próximo desenho">&gt;</a>
+				</div>
+			<br/><br/>
+		</section>
+	</section>
+		<footer id="rodape">
+	        <a href="javascript:void(0)" target="_blank">
+		        <p>
+		          <span id="text-compre" class="texto-destaque">compre</span><br/>online<br/><br/>
+		          <span class="seta">&gt;</span>
+		        </p>
+		    </a>	
+	        <a href="javascript:void(0)" target="_blank">
+		        <p>
+		          <span id="text-encontre">encontre uma</span><br/><span class="texto-destaque">loja próxima<br/>de você</span>
+		          <span class="seta">&gt;</span>
+				</p>
+			</a>
+		</footer>
+</body>
+</html>

@@ -1,0 +1,225 @@
+@charset "UTF-8";
+@font-face {
+	font-family: "UniversLTStd";
+	src: url("../_fontes/UniversLTStd.otf");
+}
+
+@font-face {
+	font-family: "UniversLTStd-Light";
+	src: url("../_fontes/UniversLTStd-Light.otf");
+}
+
+@font-face {
+	font-family: "HelveticaneueBold";
+	src: url("../_fontes/HelveticaneueBold.otf");
+}
+
+@font-face {
+	font-family: "HelveticaneueThin";
+	src: url("../_fontes/HelveticaneueThin.otf");
+}
+
+@keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Firefox */
+@-moz-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Safari and Chrome */
+@-webkit-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Internet Explorer */
+@-ms-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}​
+
+/* Opera */
+@-o-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}​
+
+div#interface{
+	margin: 0px auto;
+	width: 760px; 
+	position: relative;
+	overflow: hidden;
+}
+
+header#cabecalho{
+	text-transform: uppercase;
+	position: relative;
+	margin: 0px auto;
+	background-color: #000;
+	width: 760px;
+	overflow: hidden;
+}
+
+header#cabecalho img#capa{
+	width: 100%;
+	margin: 0px;
+	max-height: 300px;
+	border: none;
+}
+
+nav#menu{
+	display: block;
+	border: none;
+	background: #000;
+	margin: 0px;
+	bottom: 0px;
+	width: 100%;
+	padding: 5px 0px;
+	font-family: 'UniversLTStd', Arial, sans-serif;
+	font-weight: lighter;
+}
+
+nav#menu ul{
+	display: block;
+	list-style: none;
+	position: relative;
+	margin: 10px auto;
+	text-align: center;
+	color: white;
+	border: 0px solid;
+}
+
+nav#menu ul li{
+	display: inline-block;
+	border: solid white;
+	padding: 10px 5%;
+	margin: 0px 20px;
+
+	transition: 0.5s;
+	-webkit-transition: 0.5s; /* Safari and Chrome */
+	-moz-transition: 0.5s; /* Firefox */
+	-ms-transition: 0.5s; /* Internet Explorer */
+	-o-transition: 0.5s; /* Opera */
+}
+
+a:link, a:visited{
+	text-decoration: none;
+	color: inherit;
+}
+
+nav#menu ul li:hover{
+	color: #ac2d8e;
+	border: solid #ac2d8e;	
+}
+
+nav#menu ul li#aba-corrente{
+	border: solid #ac2d8e;
+	color: #ac2d8e;
+	font-family: 'UniversLTStd-Light', Arial, sans-serif;
+
+	-webkit-animation: fadein 1.2s; /* Safari and Chrome */
+    -moz-animation: fadein 1.2s; /* Firefox */
+    -ms-animation: fadein 1.2s; /* Internet Explorer */
+    -o-animation: fadein 1.2s; /* Opera */
+    animation: fadein 1.2s;
+}
+
+section#corpo{
+	position: relative;
+	width: 760px;
+	text-transform: uppercase;
+	border: none;
+	padding: 0px;
+	background: #1a1a1a;
+	margin: 0px auto;
+	text-align: center;
+	font-family: 'UniversLTStd', Arial, sans-serif;
+	font-weight: lighter;
+	color: white;
+	overflow: hidden;
+}
+
+section#corpo h1,
+section#corpo h2,
+section#corpo h3, 
+section#corpo hr,
+section#corpo p,
+section#corpo img,
+section#corpo iframe{
+    -webkit-animation: fadein 2.5s; /* Safari and Chrome */
+    -moz-animation: fadein 2.5s; /* Firefox */
+    -ms-animation: fadein 2.5s; /* Internet Explorer */
+    -o-animation: fadein 2.5s; /* Opera */
+    animation: fadein 2.5s;
+}
+
+section#corpo p {
+	color: #6a6a6a;
+}
+
+section#corpo hr {
+	width: 120px;
+	margin: 40px auto;
+}
+
+
+/** Específicos do arquivo Experimente.html **/
+
+
+
+/**********************************************/
+
+/** Específicos do arquivo Index.html **/
+
+			
+/**********************************************/
+
+
+footer#rodape{
+	text-transform: lowercase;
+	font-size: 20pt;
+	width: 760px;
+	font-family: 'HelveticaneueThin', Arial, sans-serif;
+	text-align: center;
+	background: #000;
+	clear: both;
+	margin: 0px auto;
+	overflow: hidden;
+}
+
+footer#rodape p{
+	display: inline-block;
+	position: relative;
+	text-align: left;
+	line-height: 1;	
+	width: 250px;
+	padding: 20px 35px;
+	margin: 25px;
+	background: #ab2d90;
+	color: white;
+}
+
+footer#rodape p .texto-destaque{
+	font-family: 'HelveticaneueBold', Arial, sans-serif;
+	font-weight: lighter;
+}
+
+footer#rodape p #text-compre, 
+footer#rodape p #text-encontre{
+	font-size: 26pt;
+}
+
+footer#rodape p .seta{
+	display: block;
+	position: absolute;
+	right: 30px;
+	top: 40px;
+	font-size: 50px;
+	font-family: 'Courier New', Courier, monospace;
+	font-weight: bold;
+	color: #1a1a1a;
+}

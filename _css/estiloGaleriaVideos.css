@@ -1,0 +1,101 @@
+@charset "UTF-8";
+
+    @keyframes fadein {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+    }
+
+    /* Firefox */
+    @-moz-keyframes fadein {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+    }
+
+    /* Safari and Chrome */
+    @-webkit-keyframes fadein {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+    }
+
+    /* Internet Explorer */
+    @-ms-keyframes fadein {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+    }​
+
+    /* Opera */
+    @-o-keyframes fadein {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+    }​
+
+    /*************************************/
+
+    #galeria-videos {
+        display: block;
+        width: 760px;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+        background-color: #000;
+    }
+
+    #galeria-videos ul{
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    #galeria-videos ul#s-slides{
+        display: block;
+        position: relative;
+        overflow: hidden;
+        width: 760px;
+        height: 350px;
+        background: #000;
+    }
+
+    #galeria-videos ul#s-slides .slide{
+        display: none;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+
+    #galeria-videos ul#s-slides .slide iframe{
+        display: block;
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+
+    #galeria-videos ul#s-thumbs{
+        position: relative;
+        display: block;
+        height: 80px;
+        padding: 0px;
+        margin: 0px auto;
+        width: 100%;
+        background: #262626;
+        border-top: solid 5px #262626;
+        border-bottom: solid 5px #262626;
+        border-right: solid green;
+        text-align: center;
+    }
+     
+    #galeria-videos ul#s-thumbs li{
+        display: inline-block;
+        background: inherit;
+        width: 140px;
+        padding: 0px;
+        margin: 0px;
+        border: solid #262626;
+    }
+
+    #galeria-videos ul#s-thumbs li img{
+        display: block;
+        border: none;
+        width: 100%;
+        height: 75px;
+        padding: 0px;
+    }

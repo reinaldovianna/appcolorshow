@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<html lang="pt-br">
+<head>
+	<meta charset="UTF-8"/>
+	<script type="text/javascript">
+
+		var strUrl = top.location.href;
+
+		if(strUrl.indexOf('?params=') != -1) {
+	
+			var params = strUrl.substring((strUrl.indexOf('?params')), strUrl.length);
+
+			localStorage.setItem("redirect","experimente");
+
+			arrayParams = params.split("_");
+			for(var i = 0; i < arrayParams.length; i++){
+
+				if (arrayParams[i].indexOf('-') != -1){
+					if(arrayParams[i].substring(0, arrayParams[i].indexOf('-')) == 'TD'){
+						localStorage.setItem("tipoDesenho", arrayParams[i].substring((arrayParams[i].indexOf('-') + 1), arrayParams[i].length));
+					};
+
+					if (arrayParams[i].substring(0, arrayParams[i].indexOf('-')) == 'CB') {
+						localStorage.setItem("corBase", arrayParams[i].substring((arrayParams[i].indexOf('-') + 1), arrayParams[i].length) );
+					};
+
+					if (arrayParams[i].substring(0, arrayParams[i].indexOf('-')) == 'CM') {
+						localStorage.setItem("corMedia", arrayParams[i].substring((arrayParams[i].indexOf('-') + 1), arrayParams[i].length) );
+					};
+
+					if (arrayParams[i].substring(0, arrayParams[i].indexOf('-')) == 'CI') {
+						localStorage.setItem("corInterna", arrayParams[i].substring((arrayParams[i].indexOf('-') + 1), arrayParams[i].length) );
+					}
+				}
+			}
+		} 
+		
+		location.href = 'https://www.facebook.com/webdesigneroffice/app_1399248147010884';
+
+	</script>
+</head>
+	<body>
+		<div></div>
+	</body>
+</html>

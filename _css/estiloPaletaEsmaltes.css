@@ -1,0 +1,39 @@
+@charset "UTF-8";
+
+#paletaEsmaltes{
+display : block;
+position : relative;
+right : 0px;
+width : 290px;
+border-radius: 0px 2000px 2000px 0px;
+-moz-border-radius': 0px 2000px 2000px 0px;
+-webkit-border-radius': 0px 2000px 2000px 0px;
+}
+
+#paletaEsmaltes .items{	
+position : relative;
+left : 0px;
+padding : 0px;
+list-style : none;
+margin : 270px auto;
+}
+
+#paletaEsmaltes .items li{
+display: block;
+position: absolute;
+padding: 3px;
+margin-bottom: 190px;
+}
+
+#paletaEsmaltes .items li .esmalte{
+ display: block;
+ border: none;
+ margin: 0px;
+ position: relative;
+ z-index: 30;
+ transition: 1s;
+ -webkit-transition: 1s; /* Safari and Chrome */
+ -moz-transition: 1s; /* Firefox */
+ -ms-transition: 1s; /* Internet Explorer */
+ -o-transition: 1s; /* Opera */
+}
